@@ -20,7 +20,7 @@ server {
 		#enable gss-api
         auth_gss on; 
 		#path to keytab file
-        auth_gss_keytab /etc/nginx/ws.keytab; #WITH READ PEMISSIONS FOR www-data USER!!!
+        auth_gss_keytab /etc/nginx/nginx.keytab; #WITH READ PEMISSIONS FOR www-data USER!!!
 		
 		try_files $uri $uri/ =404;
 	}
