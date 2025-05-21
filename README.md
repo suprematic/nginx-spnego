@@ -16,10 +16,24 @@ ipa service-add HTTP/test.example.com
 
 ### 2. Generate a Keytab for the NGINX Host
 
+#### 2.1 For FreeIPA server
+
 ```bash
 ipa-getkeytab -s <freeipa-server> \
   -p HTTP/test.example.com@EXAMPLE.COM \
   -k nginx.keytab
+```
+
+#### 2.2 For Windows Server
+
+Set SPN:
+```
+setspn -A HTTP/<web-address> <user>
+```
+
+Get keytab:
+```
+ktpass -princ HTTP/<web-address>@<WINDOWS_DOMAIN> -mapuser <user>@<windows_domain> -pass <user_password> -out ./nginx.keytab -ptype KRB5_NT_PRINCIPAL -crypto RC4-HMAC-NT
 ```
 
 ### 3. Prepare Your NGINX Configuration
