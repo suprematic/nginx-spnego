@@ -51,7 +51,7 @@ docker run -it --rm \
   -v $(pwd)/default:/etc/nginx/sites-available/default \
   -v $(pwd)/nginx.keytab:/etc/nginx/nginx.keytab \
   --net=host \
-  nginx-spnego:latest
+  suprematic/nginx-spnego:latest
 ```
 
 > Note: `--net=host` is used to allow NGINX to bind to system ports.
