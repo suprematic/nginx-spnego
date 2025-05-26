@@ -71,3 +71,4 @@ kinit <username>
 If everything is configured correctly, the server should respond without prompting for credentials.
 
 Some browsers may require additional configurations!
+For example, MS Edge requires that site must be added into 'Local Intranet' list and available via HTTPS.
