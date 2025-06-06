@@ -72,3 +72,51 @@ If everything is configured correctly, the server should respond without prompti
 
 Some browsers may require additional configurations!
 For example, MS Edge requires that site must be added into 'Local Intranet' list and available via HTTPS.
+
+
+Here’s a `README.md` description for your SPNEGO-based authentication project to protect internal Kubernetes HTTP applications. It explains the architecture, purpose, and how to use it:
+
+---
+
+## Usage in Kubernetes
+
+### 🔒 Use Case
+
+This solution is ideal for internal web applications deployed in a Kubernetes cluster where centralized authentication via **FreeIPA**, **Active Directory**, or another Kerberos-compatible realm is required. It integrates seamlessly with an Ingress controller and supports secure header-based identity propagation.
+
+---
+
+### 🧩 Architecture Overview
+
+* **NGINX + SPNEGO**: Runs as a standalone deployment behind an internal service.
+* **Ingress Auth Integration**: The Ingress controller delegates authentication to the SPNEGO service using the `auth-url` and `auth-response-headers` annotations.
+* **Kerberos Keytab**: Provided securely via Kubernetes Secret.
+* **User Identity**: Passed to backend applications via the `X-Authenticated-User` HTTP header.
+
+---
+
+### 🚀 Components
+
+#### 1. `ConfigMap`: NGINX Configuration
+
+Defines the NGINX server block, enabling SPNEGO authentication via the `auth_gss` directive. The user identity is exposed with the `X-Authenticated-User` header.
+
+#### 2. `Secret`: Kerberos Keytab
+
+Contains the keytab file (`http-headers.keytab`) for the SPNEGO service principal (e.g., `HTTP/spnego-auth.default.svc.cluster.local@YOUR.REALM`), base64-encoded.
+
+#### 3. `Deployment`: SPNEGO Auth Service
+
+Runs the custom NGINX image (`suprematic/nginx-spnego`) with:
+
+* Mounted keytab at `/etc/nginx/nginx.keytab`
+* Mounted `nginx.conf` from the ConfigMap
+* Logs to `stdout` and `stderr` for easy access
+
+#### 4. `Service`: Internal Access
+
+A ClusterIP service exposes the NGINX pod at port 80.
+
+#### 5. `Ingress`: Authentication Gateway
+
+Ingress configuration for the protected application. Uses `auth-url` to delegate requests to the SPNEGO service and propagates the `X-Authenticated-User` header to the backend.
